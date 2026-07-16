@@ -9,5 +9,5 @@ print("python")
 print("shrek","fiona")
 print("5+4=",5+4)
 
-print("Christiano",end="\n")
+print("Christiano",end=" ")
 print("Ronaldo")
