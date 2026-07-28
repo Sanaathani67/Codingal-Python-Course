@@ -12,7 +12,15 @@ def calculate_total(price, items):
     return total
 
 my_total_bill = calculate_total(price_per_item, items_bought)
-print("Total Cost:", round(my_total_bill, ))
+print("Total Cost:", round(my_total_bill, 2))
+
+amount_paid = float(input("Enter the amount paid:"))
+
+def calculate_change(paid, total):
+    change = paid - total
+    return change
+
+change_due = calculate_change(amount_paid, my_total_bill)
 
 def thank_you_message(items):
     if items >= 5:
@@ -26,10 +34,6 @@ print("\n----- Art Supplies Receipt -----")
 print("Price per item: ", round(price_per_item, ))
 print("Items purchased:", items_bought)
 print("Total cost: ", round(my_total_bill, ))
+print("Amount paid: ", round(amount_paid, ))
+print("Change due: ", round(change_due, ))
 
-
-def closing_message():
-    print("Thank you for visiting the Art Supplies Store!")
-    print("Come back soon for more creative supplies!")
-
-closing_message()
