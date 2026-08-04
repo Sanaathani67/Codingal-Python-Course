@@ -1,4 +1,5 @@
-secret =27
+import random
+secret =random.randint(1,50)
 i=1
 while i<=5:
     guess=int(input("guess the secret number : "))
@@ -20,4 +21,4 @@ while i<=5:
     i=i+1
 
 if i == 6:
-    print("uh oh u ran out of tries (the secret number was 27!)")
+    print(f"uh oh u ran out of tries (the secret number was{secret} !)")
