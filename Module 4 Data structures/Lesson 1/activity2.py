@@ -8,5 +8,5 @@ for fruit in fruits:
     if fruit == search:
         count = count + 1
 
-print(search, "occurs", count, "times in the list.")
+print(search, "comes", count, "times in the list.")
 
