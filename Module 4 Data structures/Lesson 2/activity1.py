@@ -1,39 +1,21 @@
-habit_info = ("Exercise", True, 7, 30)
+tuplex = ("hello", 42, 3.14, True)
+print("Step 1 - Mixed Data Types:", tuplex)
 
-weekly_habits = (1, 0, 1, 1, 0, 1, 0)
+tuplex = (10, 20, 50, 40, 50, 60)
+print("Step 2 - Six Integers:", tuplex)
 
-print("Number of days:", len(weekly_habits))
+tuplex = tuplex + (9,)
+print("Step 3 - Added 9:", tuplex)
 
-print("Monday:", weekly_habits[0])
-print("Thursday:", weekly_habits[3])
+tuple1 = (10, 50, 20, 50, 30, 50, 40)
+count_50 = tuple1.count(50)
+print("Step 4 - Count of 50 in tuple1:", count_50)
 
-print("First 3 days:", weekly_habits[0:3])
-print("Days 6 and 7:", weekly_habits[5:7])
+tuplex = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9)
+print("Step 5 - Long Tuple for Slicing:", tuplex)
 
-weekly_habits = weekly_habits + (1,)
-print("Updated weekly habits:", weekly_habits)
+slice1 = tuplex[3:5]
+print("Step 6 - Slice tuplex[3:5]:", slice1)
 
-completed = weekly_habits.count(1)
-missed = weekly_habits.count(0)
-
-print("Completed days:", completed)
-print("Missed days:", missed)
-
-completed_loop = 0
-missed_loop = 0
-
-for day in weekly_habits:
-    if day == 1:
-        completed_loop += 1
-    else:
-        missed_loop += 1
-
-print("Completed days using loop:", completed_loop)
-print("Missed days using loop:", missed_loop)
-
-if completed_loop > missed_loop:
-    print("Great job! You completed more days than you missed.")
-elif completed_loop == missed_loop:
-    print("Good effort! You completed and missed the same number of days.")
-else:
-    print("Keep going! Try to complete more days next week.")
+slice2 = tuplex[:6]
+print("Step 7 - Slice tuplex[:6]:", slice2)
