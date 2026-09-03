@@ -7,3 +7,17 @@ class Circle:
 
 c = Circle(5)
 print(c.area())
+
+
+class Car:
+    def __init__(self, color):
+        self.colour = color
+
+my_car = Car("red")
+
+
+class Counter:
+    count = 0
+
+    def __init__(self):
+        Counter.Counter += 1
