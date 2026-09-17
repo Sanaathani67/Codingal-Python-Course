@@ -1,5 +1,6 @@
 import pygame
 import random
+import os
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 500, 400
 MOVEMENT_SPEED = 5
@@ -15,7 +16,10 @@ all_sprites = pygame.sprite.Group()
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, image_file):
         super().__init__()
-        self.image = pygame.image.load(image_file).convert_alpha()
+
+        image_path = os.path.join(os.path.dirname(__file__), image_file)
+
+        self.image = pygame.image.load(image_path).convert_alpha()
         self.image = pygame.transform.scale(self.image, (50, 50))
         self.rect = self.image.get_rect()
 
@@ -28,13 +32,11 @@ class Sprite(pygame.sprite.Sprite):
         )
 
 
-# Create the snake
 s1 = Sprite("snake.png")
 s1.rect.x = random.randint(0, SCREEN_WIDTH - s1.rect.width)
 s1.rect.y = random.randint(0, SCREEN_HEIGHT - s1.rect.height)
 all_sprites.add(s1)
 
-# Create the mouse
 s2 = Sprite("mouse.png")
 s2.rect.x = random.randint(0, SCREEN_WIDTH - s2.rect.width)
 s2.rect.y = random.randint(0, SCREEN_HEIGHT - s2.rect.height)
@@ -47,6 +49,7 @@ clock = pygame.time.Clock()
 while running:
 
     for event in pygame.event.get():
+
         if event.type == pygame.QUIT or (
             event.type == pygame.KEYDOWN and event.key == pygame.K_x
         ):
@@ -64,7 +67,6 @@ while running:
 
     s1.move(x_change, y_change)
 
-    # If the snake catches the mouse, move the mouse
     if s1.rect.colliderect(s2.rect):
         s2.rect.x = random.randint(0, SCREEN_WIDTH - s2.rect.width)
         s2.rect.y = random.randint(0, SCREEN_HEIGHT - s2.rect.height)
