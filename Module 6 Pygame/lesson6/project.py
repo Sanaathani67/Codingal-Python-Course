@@ -28,7 +28,7 @@ IMAGE_BASE_PATH="Module 6 Pygame\\Lesson 5\\"
 bg=pygame.image.load(IMAGE_BASE_PATH+'background.png')
 
 #music
-pygame.mixer.music.load(IMAGE_BASE_PATH+'background_music.mp3')
+pygame.mixer.music.load(IMAGE_BASE_PATH+'Module 6 Pygame\lesson6\background_music.mp3')
 pygame.mixer.music.play(-1)
 pygame.mixer.music.set_volume(0.5)
 
