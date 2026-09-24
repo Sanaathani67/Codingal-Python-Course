@@ -1,139 +1,164 @@
-import pygame
+import math
 import random
-import os
+import pygame
 
-SCREEN_WIDTH, SCREEN_HEIGHT = 500, 400
-MOVEMENT_SPEED = 5
-FONT_SIZE = 60
+#Constants
+SCREEN_WIDTH=800
+SCREEN_HEIGHT=500
+PLAYER_START_X=370
+PLAYER_START_Y=380
+ENEMY_START_Y_MIN=50
+ENEMY_START_Y_MAX=150
+ENEMY_SPEED_X=4
+ENEMY_SPEED_Y=40
+BULLET_SPEED_Y=10
+COLLISION_DISTANCE=27
 
+#INITIALIZE Pygame
 pygame.init()
+pygame.mixer.init()
 
-folder = os.path.dirname(__file__)
+#Create the screen
+screen=pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-background_image = pygame.transform.scale(
-    pygame.image.load(os.path.join(folder, "pet_bg.jpg")),
-    (SCREEN_WIDTH, SCREEN_HEIGHT)
-)
+#image path
+IMAGE_BASE_PATH="Module 6 Pygame\\Lesson 5\\"
 
-font = pygame.font.SysFont("Arial", FONT_SIZE)
+#background
+bg=pygame.image.load(IMAGE_BASE_PATH+'background.png')
 
-class Sprite(pygame.sprite.Sprite):
-    def __init__(self, color, width, height):
-        super().__init__()
+#music
+pygame.mixer.music.load(IMAGE_BASE_PATH+'background_music.mp3')
+pygame.mixer.music.play(-1)
+pygame.mixer.music.set_volume(0.5)
 
-        self.image = pygame.Surface([width, height])
-        self.image.fill(color)
-        self.rect = self.image.get_rect()
+#caption and icon
+pygame.display.set_caption("Space Invader")
+icon=pygame.image.load(IMAGE_BASE_PATH+'ufo.png')
+pygame.display.set_icon(icon)
 
-    def move(self, x_change, y_change):
-        self.rect.x = max(
-            min(self.rect.x + x_change, SCREEN_WIDTH - self.rect.width),
-            0
-        )
+#player
+playerImg=pygame.image.load(IMAGE_BASE_PATH+'player.png')
+playerx=PLAYER_START_X
+playerY=PLAYER_START_Y
+playerx_change=0
 
-        self.rect.y = max(
-            min(self.rect.y + y_change, SCREEN_HEIGHT - self.rect.height),
-            0
-        )
+#enemy
+enemyimg=[]
+enemyx=[]
+enemyy=[]
+enemyx_change=[]
+enemyy_change=[]
+num_of_enemies=6
 
-screen = pygame.display.set_mode(
-    (SCREEN_WIDTH, SCREEN_HEIGHT)
-)
+for _i in range(num_of_enemies):
+    enemyimg.append(pygame.image.load(IMAGE_BASE_PATH+'enemy.png'))
+    enemyx.append(random.randint(0, SCREEN_WIDTH-64))
+    enemyy.append(random.randint(ENEMY_START_Y_MIN, ENEMY_START_Y_MAX))
+    enemyx_change.append(ENEMY_SPEED_X)
+    enemyy_change.append(ENEMY_SPEED_Y)
 
-pygame.display.set_caption("Pet Food Collection Game")
+#BULLET
+bulletimg=pygame.image.load(IMAGE_BASE_PATH+'bullet.png')
+bulletx=0
+bullety=PLAYER_START_Y
+bulletx_change=0
+bullety_change=BULLET_SPEED_Y
+bullet_state="ready"
 
-all_sprites = pygame.sprite.Group()
+#score
+score_value=0
+font=pygame.font.SysFont('Times New Roman',32)
+textx=10
+texty=10
 
-pet = Sprite(
-    pygame.Color("brown"),
-    40,
-    40
-)
+#game over text
+over_font=pygame.font.SysFont('Times New Roman',64)
 
-pet.rect.x = 30
-pet.rect.y = 180
+def show_score(x,y):
+    score=font.render("score:"+str(score_value),True,(255,255,255))
+    screen.blit(score,(x,y))
 
-all_sprites.add(pet)
+def game_over_text():
+    over_text=over_font.render("GAME OVER:(",True,(255,255,255))
+    screen.blit(over_text,(200,250))
 
-pet_food = Sprite(
-    pygame.Color("orange"),
-    30,
-    30
-)
+def player(x,y):
+    screen.blit(playerImg,(x,y))
 
-pet_food.rect.x = random.randint(
-    100,
-    SCREEN_WIDTH - pet_food.rect.width
-)
+def enemy(x,y,i):
+    screen.blit(enemyimg[i],(x,y))
 
-pet_food.rect.y = random.randint(
-    0,
-    SCREEN_HEIGHT - pet_food.rect.height
-)
+def fire_bullet(x,y):
+    global bullet_state
+    bullet_state="fire"
+    screen.blit(bulletimg,(x+16,y+10))
 
-all_sprites.add(pet_food)
+def isCollision(enemyx,enemyy,bulletx,bullety):
+    distance=math.sqrt((enemyx-bulletx)**2+(enemyy-bullety)**2)
+    return distance<COLLISION_DISTANCE
 
-running = True
-food_collected = False
-
-clock = pygame.time.Clock()
-
+#game loop
+running=True
 while running:
+    screen.fill((0,0,0))
+    screen.blit(bg,(0,0))
 
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
+        if event.type==pygame.QUIT:
+            running=False
 
-    if not food_collected:
+        if event.type==pygame.KEYDOWN:
+            if event.key==pygame.K_LEFT:
+                playerx_change=-5
+            if event.key==pygame.K_RIGHT:
+                playerx_change=5
+            if event.key==pygame.K_SPACE and bullet_state=="ready":
+                bulletx=playerx
+                fire_bullet(bulletx,bullety)
 
-        keys = pygame.key.get_pressed()
+        if event.type==pygame.KEYUP and event.key in [pygame.K_LEFT,pygame.K_RIGHT]:
+            playerx_change=0
 
-        x_change = (
-            keys[pygame.K_RIGHT] -
-            keys[pygame.K_LEFT]
-        ) * MOVEMENT_SPEED
+    #player movement
+    playerx+=playerx_change
+    playerx=max(0,min(playerx,SCREEN_WIDTH-64))
 
-        y_change = (
-            keys[pygame.K_DOWN] -
-            keys[pygame.K_UP]
-        ) * MOVEMENT_SPEED
+    #enemy movement
+    for i in range(num_of_enemies):
+        if enemyy[i]>340:
+            for j in range(num_of_enemies):
+                enemyy[j]=2000
+            game_over_text()
+            break
 
-        pet.move(x_change, y_change)
+        enemyx[i]+=enemyx_change[i]
 
-        if pet.rect.colliderect(pet_food.rect):
-            all_sprites.remove(pet_food)
-            food_collected = True
+        if enemyx[i]<=0 or enemyx[i]>=SCREEN_WIDTH-64:
+            enemyx_change[i]*=-1
+            enemyy[i]+=enemyy_change[i]
 
-    screen.blit(
-        background_image,
-        (0, 0)
-    )
+        #collision check
+        if isCollision(enemyx[i],enemyy[i],bulletx,bullety):
+            bullety=PLAYER_START_Y
+            bullet_state="ready"
+            score_value+=1
+            enemyx[i]=random.randint(0,SCREEN_WIDTH-64)
+            enemyy[i]=random.randint(ENEMY_START_Y_MIN,ENEMY_START_Y_MAX)
 
-    all_sprites.draw(screen)
+        enemy(enemyx[i],enemyy[i],i)
 
-    if food_collected:
+    #bullet movement
+    if bullety<=0:
+        bullety=PLAYER_START_Y
+        bullet_state="ready"
+    elif bullet_state=="fire":
+        fire_bullet(bulletx,bullety)
+        bullety-=bullety_change
 
-        win_text = font.render(
-            "Food Collected!",
-            True,
-            pygame.Color("black")
-        )
+    player(playerx,playerY)
+    show_score(textx,texty)
+    pygame.display.update()
 
-        text_x = (
-            SCREEN_WIDTH - win_text.get_width()
-        ) // 2
-
-        text_y = (
-            SCREEN_HEIGHT - win_text.get_height()
-        ) // 2
-
-        screen.blit(
-            win_text,
-            (text_x, text_y)
-        )
-
-    pygame.display.flip()
-
-    clock.tick(60)
-
+pygame.mixer.music.stop()
 pygame.quit()
